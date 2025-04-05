@@ -1,22 +1,5 @@
 use std::{error::Error, sync::{mpsc, Arc, Mutex}, thread::{self, JoinHandle}};
 
-pub struct ThreadPool {
-    workers: Vec<Worker>,
-    sender: Option<mpsc::Sender<Job>>,
-}
-
-impl Drop for ThreadPool {
-    fn drop(&mut self) {
-        drop(self.sender.take());
-
-        for worker in &mut self.workers {
-            if let Some(thread) = worker.thread.take() {
-                thread.join().unwrap();
-            }
-        }
-    }
-}
-
 /// Пул потоков.
 /// 
 /// #Example
@@ -46,6 +29,22 @@ impl Drop for ThreadPool {
 /// });
 /// thread::sleep(Duration::new(3, 0));
 ///```
+pub struct ThreadPool {
+    workers: Vec<Worker>,
+    sender: Option<mpsc::Sender<Job>>,
+}
+
+impl Drop for ThreadPool {
+    fn drop(&mut self) {
+        drop(self.sender.take());
+
+        for worker in &mut self.workers {
+            if let Some(thread) = worker.thread.take() {
+                thread.join().unwrap();
+            }
+        }
+    }
+}
 
 impl ThreadPool {
     /// Создайте новый ThreadPool.
