@@ -1,3 +1,5 @@
+#![crate_type = "lib"]
+#![crate_name = "speck_thread_pool"]
 use std::{error::Error, sync::{mpsc, Arc, Mutex}, thread::{self, JoinHandle}};
 
 /// Пул потоков.
